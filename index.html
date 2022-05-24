@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Spørgeskema</title>
+    <meta charset="utf-8">
+
+    <!-- Spørgeskemaet er inspireret af følgende hjemmeside: https://surveyjs.io/Documentation/Library?id=design-survey-create-a-multi-page-survey-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/survey-jquery/survey.jquery.min.js"></script>
+    <script type="text/javascript">
+
+//Style den via det "modern" tema via jquary
+Survey.StylesManager.applyTheme("modern");
+
+const surveyJson = 
+
+{
+    
+    pages: [{
+        
+        //Startsiden, hvor beskrivelsen er om undersøgelsen
+        elements: 
+        [{
+
+            type: "html",
+            html: "<h2>I dette spørgeskema vil du blive spurgt ind til din aktivitet med dit barn og hvilke øvelser du har prøvet.</h2>"
+
+        }]
+    }, 
+    
+    {
+        elements: 
+        [{
+
+            //Hvis du ændrer på nedenstående navn, skal det også gøres i de næste to spørgsmål.
+            name: "aktivitet-score",
+            title: "Synes du, at det kan være svært at aktivere dit barn/børn i ferier og weekender?",
+            //Radiogroup = Afkrydsning
+            type: "radiogroup",
+            
+            choices: [
+                { value: 5, text: "Aldrig" },
+                { value: 4, text: "Sjældent" },
+                { value: 3, text: "Nogle gange" },
+                { value: 2, text: "Ofte" },
+                { value: 1, text: "Altid" }],
+                
+            // Gør besvarelsen krævet
+            isRequired: true
+            
+        }]
+    }, 
+
+    {
+        elements: 
+        [{
+            name: "antal-øvelser",
+            title: "Har du prøvet nogen af nedenstående sansestimulerende øvelser?",
+            type: "matrix",
+
+            columns: [
+                {value: 1, text: "Ja"}, 
+                
+                {value: 0, text: "Nej"}],
+            
+            
+            rows: [
+                {value: "høre", text: "Høresansen"}, 
+                
+                {value: "syn", text: "Synssansen"}, 
+                
+                {value: "muskel/led", text: "Muskel-/ledsansen"},
+
+                {value: "ingen-af-dem", text: "Ingen af dem"}],
+
+            // Gør besvarelsen krævet
+            isRequired: true
+        }],
+    },
+
+    {
+        elements: 
+        [{
+            name: "reaktion-på-øvelsen",
+            title: "Hvordan reagerede dit barn på øvelsen/øvelserne, hvis de er prøvet?",
+            //Her er det skriftsvar
+            type: "comment",
+        }],
+    }, 
+
+    {
+        elements: 
+        [{
+
+            //Hvis du ændrer på nedenstående navn, skal det også gøres i de næste to spørgsmål.
+            name: "ville-du-bruge-videoer",
+            title: "Hvis du havde en hjemmeside med daglige inspirationsvideoer til stimulering af dit barn, ville du bruge den?",
+            //Radiogroup = Afkrydsning
+            type: "radiogroup",
+            
+            choices: [
+                { value: 1, text: "Ja" },
+                { value: 0, text: "Nej" }],
+                
+            // Gør besvarelsen krævet
+            isRequired: true
+            
+        }]
+    }],
+
+    //Teksten på at gå videre i spørgeskemaet
+    pageNextText: "Videre",
+
+    //Teksten på indsendning af dataen
+    completeText: "Indsend",
+
+    //Teksten på den første knap ved startsiden
+    startSurveyText: "Start spørgeskema",
+
+    //Teksten, når man har taget spørgeskemaet
+    completedHtml: "Tak for din besvarelse",
+
+}
+
+const survey = new Survey.Model(surveyJson);
+
+function displayResults (sender) {
+    //JSON laver dataen til "string" = Læselig teskt.
+    const results = JSON.stringify(sender.data, null, 4);
+
+    // Vælger noden med id = surveyResults fra html og gemmer det som results.
+    document.querySelector("#surveyResults").textContent = results;
+
+    // Nedenstående er, at resultatet vises via "  style.display = "block"  "
+    document.querySelector("#resultsContainer").style.display = "block"
+
+}
+
+// Når man er færdig med at lave spørgeskemaet viser den resultatet.
+survey.onComplete.add(displayResults);
+
+$(function() {
+    $("#surveyContainer").Survey({ model: survey });
+});
+
+    </script>
+
+    <link href="https://unpkg.com/survey-jquery/modern.min.css" type="text/css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <!--Spørgeskemaet-->
+    <div id="surveyContainer"></div>
+
+    <!--Resultatet, som vises som det sidste-->
+    <div id="resultsContainer" style="display:none;">
+
+        <!-- Ændrer nedenstående tekst, hvis der skal stå noget -->
+        <p>Result JSON:</p>
+        <code id="surveyResults" style="white-space:pre;"></code>
+
+    </div>
+
+</body>
+
+</html>
